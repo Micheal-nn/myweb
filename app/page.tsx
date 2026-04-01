@@ -24,11 +24,11 @@ export default function IntroPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h1 className="text-6xl md:text-8xl font-display font-bold mb-2">
-            {siteConfig.intro.name}
+          <h1 className="text-6xl md:text-9xl font-display font-bold mb-2">
+            {siteConfig.intro.nameEn}
           </h1>
           <p className="text-2xl md:text-3xl text-text-secondary font-light">
-            {siteConfig.intro.nameEn}
+            {siteConfig.intro.name}
           </p>
         </motion.div>
 

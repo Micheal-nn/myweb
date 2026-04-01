@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Mail, MapPin } from 'lucide-react'
 import NavigationCard from '@/components/NavigationCard'
+import SubtleBackground from '@/components/SubtleBackground'
 import { siteConfig } from '@/lib/config'
 
 // GitHub SVG icon
@@ -15,7 +16,8 @@ const GithubIcon = () => (
 
 export default function MainPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center py-20 px-4 bg-[#0a0a0a] text-white">
+    <main className="min-h-screen flex flex-col items-center justify-center py-20 px-4 bg-[#0a0a0a] text-white relative">
+      <SubtleBackground />
       {/* Avatar */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -39,11 +41,11 @@ export default function MainPage() {
         transition={{ duration: 0.5, delay: 0.1 }}
         className="text-center"
       >
-        <h1 className="text-3xl md:text-4xl font-bold">
-          {siteConfig.intro.name}
+        <h1 className="text-4xl md:text-5xl font-bold">
+          {siteConfig.intro.nameEn}
         </h1>
         <p className="text-xl text-[#a0a0a0] mt-1">
-          {siteConfig.intro.nameEn}
+          {siteConfig.intro.name}
         </p>
       </motion.div>
 

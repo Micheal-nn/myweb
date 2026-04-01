@@ -1,111 +1,127 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, MapPin } from 'lucide-react'
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, MapPin } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface TimelineItem {
   company: string
   companyEn: string
   role: string
+  roleZh?: string
   period: string
   location: string
+  locationZh?: string
   description: string
+  descriptionZh?: string
   achievements: string[]
+  achievementsZh?: string[]
   technologies: string[]
 }
 
-interface TimelineProps {
-  items: TimelineItem[]
-}
+// Timeline entry component (local to this file)
+const TimelineCard: React.FC<{ item: TimelineItem; index: number }> = ({ item, index }) => {
+  const { language, t } = useLanguage();
+  const company = language === 'en' ? item.companyEn : (item.company ?? item.companyEn);
+  const role = language === 'en' ? item.role : (item.roleZh || item.role);
+  const location = language === 'en' ? item.location : (item.locationZh || item.location);
+  const description = language === 'en' ? item.description : (item.descriptionZh || item.description);
+  const achievements = language === 'en' ? item.achievements : (item.achievementsZh || item.achievements);
+  const technologies = item.technologies ?? [];
+  const period = item.period;
 
-export default function Timeline({ items }: TimelineProps) {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="relative">
-      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent-primary to-purple-500" />
+    <motion.div
+      className="relative pl-12 mb-8"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.04 }}
+      aria-label={`timeline-item-${index}`}
+    >
+      {/* Timeline line dot aligned with each item */}
+      <span className="absolute left-6 top-6 w-3 h-3 rounded-full bg-accent-primary" aria-hidden="true" />
 
-      <div className="space-y-8">
-        {items.map((item, index) => (
+      {/* Collapsed / header card */}
+      <div
+        className="bg-background-alt/50 border border-white/5 rounded-xl p-5 cursor-pointer"
+        onClick={() => setExpanded((s) => !s)}
+        role="button"
+        aria-expanded={expanded}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs text-text-secondary block">{period}</span>
+            <div className="text-lg font-semibold mt-1">{company}</div>
+            <div className="text-sm text-text-secondary mt-1">{role}</div>
+            <div className="flex items-center text-sm text-text-secondary mt-2">
+              <MapPin className="w-4 h-4 mr-1" />
+              <span>{location}</span>
+            </div>
+          </div>
+          <ChevronDown
+            className={`w-5 h-5 text-text-primary transition-transform ${expanded ? 'rotate-180' : ''}`}
+          />
+        </div>
+      </div>
+
+      {/* Expanded content */}
+      <AnimatePresence>
+        {expanded && (
           <motion.div
-            key={index}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="relative pl-12"
+            key={`exp-${index}`}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            style={{ overflow: 'hidden' }}
+            transition={{ duration: 0.25 }}
+            className="mt-3"
           >
-            <div className="absolute left-2 top-2 w-5 h-5 rounded-full bg-accent-primary border-4 border-background" />
-
-            <div className="card card-hover">
-              <div
-                className="cursor-pointer"
-                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold">{item.company}</h3>
-                    <p className="text-text-secondary text-sm">{item.companyEn}</p>
+            <div className="p-4 bg-background-alt rounded-xl border border-white/5">
+              {description && <p className="mb-3">{description}</p>}
+              {achievements && achievements.length > 0 && (
+                <div className="mb-2">
+                  <strong className="inline-block mb-1">{t('Achievements','工作成果')}:</strong>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {achievements.map((a, i) => (
+                      <li key={i}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {technologies.length > 0 && (
+                <div className="mt-2">
+                  <strong className="inline-block mb-1">{t('Technologies','技术栈')}:</strong>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {technologies.map((tech, i) => (
+                      <span key={i} className="px-2 py-1 rounded-full bg-white/10 text-xs">
+                        {tech}
+                      </span>
+                    ))}
                   </div>
-                  <motion.div
-                    animate={{ rotate: expandedIndex === index ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ChevronDown className="w-5 h-5 text-text-secondary" />
-                  </motion.div>
                 </div>
-
-                <p className="text-accent-primary font-medium mt-2">{item.role}</p>
-                
-                <div className="flex items-center gap-4 mt-2 text-sm text-text-secondary">
-                  <span>{item.period}</span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    {item.location}
-                  </span>
-                </div>
-
-                <p className="text-text-secondary mt-3">{item.description}</p>
-              </div>
-
-              <AnimatePresence>
-                {expandedIndex === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="mt-4 pt-4 border-t border-white/10">
-                      <h4 className="font-medium mb-2">Key Achievements:</h4>
-                      <ul className="space-y-2">
-                        {item.achievements.map((achievement, i) => (
-                          <li key={i} className="flex items-start gap-2 text-text-secondary">
-                            <span className="text-accent-primary mt-1">•</span>
-                            {achievement}
-                          </li>
-                        ))}
-                      </ul>
-
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {item.technologies.map((tech, i) => (
-                          <span
-                            key={i}
-                            className="px-3 py-1 bg-accent-primary/10 text-accent-primary rounded-full text-sm"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              )}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+export default function Timeline({ items }: { items: TimelineItem[] }) {
+  return (
+    <section className="relative timeline-container pb-6">
+      {/* Left vertical line for the timeline */}
+      <div className="absolute left-6 top-0 bottom-0 w-px bg-white/10" aria-hidden="true" />
+
+      <div className="space-y-0">
+        {items.map((item, index) => (
+          <TimelineCard key={index} item={item} index={index} />
         ))}
       </div>
-    </div>
-  )
+    </section>
+  );
 }

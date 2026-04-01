@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { siteConfig } from '@/lib/config'
+import { LanguageProvider } from '@/context/LanguageContext'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -52,8 +53,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="font-sans bg-background text-text-primary antialiased">{children}</body>
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+      <body className="font-sans bg-background text-text-primary antialiased" suppressHydrationWarning>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   )
 }

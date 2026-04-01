@@ -1,152 +1,162 @@
 'use client'
 
-import { useState } from 'react'
-import PageLayout from '@/components/PageLayout'
-import { Mail, MapPin, Phone, Download, Send } from 'lucide-react'
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Mail, MapPin, Download, Send } from 'lucide-react'
+import { useLanguage } from '@/context/LanguageContext'
 import { siteConfig } from '@/lib/config'
+import PageLayout from '@/components/PageLayout'
 
+// Contact page with bilingual EN/ZH support
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  })
+  const { t } = useLanguage()
+
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    const mailtoLink = `mailto:${siteConfig.profile.email}?subject=Contact from ${formData.name}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${formData.email}`
-    window.location.href = mailtoLink
-    
+
+    const subject = `Contact from ${formData.name}`
+    const body = `${formData.message}\n\nFrom: ${formData.email}`
+    const mailto = `mailto:${siteConfig.profile.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+    window.location.href = mailto
+
+    // Reset after attempting to mail
     setIsSubmitting(false)
+    setFormData({ name: '', email: '', message: '' })
   }
 
   return (
-    <PageLayout title="Contact" titleZh="联系我">
-      <div className="grid md:grid-cols-2 gap-12">
-        <div>
-          <h3 className="text-xl font-semibold mb-6">Send a Message</h3>
+    <PageLayout title={t('Contact', '联系我')}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Left: Message form */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="bg-background-alt/50 border border-white/5 rounded-xl p-6 w-full"
+        >
+          <h2 className="text-2xl font-semibold mb-4">{t('Send a Message', '发送消息')}</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-text-secondary mb-2">Name</label>
+              <label htmlFor="name" className="block text-sm font-medium text-white/80">
+                {t('Name', '姓名')}
+              </label>
               <input
-                type="text"
+                id="name"
+                name="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-background-alt border border-white/10 rounded-lg focus:outline-none focus:border-accent-primary transition-colors"
-                placeholder="Your name"
+                onChange={update}
+                placeholder={t('Your name', '您的姓名')}
                 required
+                className="mt-1 w-full px-4 py-3 bg-background-alt border border-white/10 rounded-lg focus:outline-none focus:border-accent-primary transition-colors"
               />
             </div>
             <div>
-              <label className="block text-sm text-text-secondary mb-2">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-white/80">
+                {t('Email', '邮箱')}
+              </label>
               <input
+                id="email"
+                name="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 bg-background-alt border border-white/10 rounded-lg focus:outline-none focus:border-accent-primary transition-colors"
-                placeholder="your@email.com"
+                onChange={update}
+                placeholder={t('Your email', '您的邮箱')}
                 required
+                className="mt-1 w-full px-4 py-3 bg-background-alt border border-white/10 rounded-lg focus:outline-none focus:border-accent-primary transition-colors"
               />
             </div>
             <div>
-              <label className="block text-sm text-text-secondary mb-2">Message</label>
+              <label htmlFor="message" className="block text-sm font-medium text-white/80">
+                {t('Message', '留言')}
+              </label>
               <textarea
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                id="message"
+                name="message"
                 rows={5}
-                className="w-full px-4 py-3 bg-background-alt border border-white/10 rounded-lg focus:outline-none focus:border-accent-primary transition-colors resize-none"
-                placeholder="Your message..."
+                value={formData.message}
+                onChange={update}
+                placeholder={t('Your message', '您的留言')}
                 required
+                className="mt-1 w-full px-4 py-3 bg-background-alt border border-white/10 rounded-lg focus:outline-none focus:border-accent-primary transition-colors"
               />
             </div>
             <button
               type="submit"
+              className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md"
               disabled={isSubmitting}
-              className="btn-primary w-full flex items-center justify-center gap-2"
             >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
               <Send className="w-4 h-4" />
+              <span>{isSubmitting ? t('Sending...', '发送中...') : t('Send Message', '发送消息')}</span>
             </button>
           </form>
-        </div>
+        </motion.div>
 
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-xl font-semibold mb-6">Direct Contact</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-accent-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-text-secondary">Location</p>
-                  <p>{siteConfig.profile.location}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-accent-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-text-secondary">Email</p>
-                  <a href={`mailto:${siteConfig.profile.email}`} className="hover:text-accent-primary transition-colors">
-                    {siteConfig.profile.email}
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent-primary/10 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-accent-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-text-secondary">Phone</p>
-                  <p>{siteConfig.profile.phone}</p>
-                </div>
-              </div>
-            </div>
+        {/* Right: Contact info */}
+        <motion.aside
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="bg-background-alt/50 border border-white/5 rounded-xl p-6"
+        >
+          <h3 className="text-xl font-semibold mb-3">{t('Contact Info', '联系方式')}</h3>
+
+          <div className="flex items-center gap-2 mb-3 text-white/90">
+            <MapPin className="w-5 h-5" />
+            <span>{siteConfig.profile.location}</span>
           </div>
 
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Social</h3>
-            <div className="flex gap-4">
-              <a
-                href={siteConfig.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card card-hover flex items-center gap-2 px-4 py-3"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387-.599 2.666-.812 3.533-.812 3.533 0 0 2.147.093 4.427.073 4.427 5.373 4.427 5.373 0-2.595 0-1.342-2.197.986-3.053-.533 1.266-1.794 1.456g-.975.896-.454 1.534.454h3.054c1.134-.412 1.122.07g 1.166-.376 1.927.066-1.166-.376 1.926-.644 1.635-1.237 1.436-1.284 1.681-.624 1.164 1.681h4.127c.085.074 4.127c.085.074h1.484c.091-.453-.068-.776-.091-.45-.068.776-.515.677-.352 2.073-1.507 1.613-.393 1.868-.476 2.484 2.675.3-1.507 1.613.393 1.868.476 2.484-2.675.3z"/>
-                </svg>
-                GitHub
-              </a>
-              <a
-                href={siteConfig.links.csdn}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="card card-hover flex items-center gap-2 px-4 py-3"
-              >
-                CSDN
-              </a>
-            </div>
+          <div className="flex items-center gap-2 mb-4 text-white/90">
+            <Mail className="w-5 h-5" />
+            <span>{siteConfig.profile.email}</span>
           </div>
 
-          <div>
-            <h3 className="text-xl font-semibold mb-4">Resume</h3>
-            <a
-              href="/resume.pdf"
-              download
-              className="btn-secondary inline-flex items-center gap-2"
-            >
-              <Download className="w-5 h-5" />
-              Download Resume (PDF)
-            </a>
+          <div className="mt-2">
+            <div className="text-sm font-semibold mb-2">{t('Social', '社交')}</div>
+            <ul className="flex space-x-4">
+              <li>
+                <a href={siteConfig.links.github} target="_blank" rel="noreferrer" className="text-white/80 hover:underline">
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a href={siteConfig.links.csdn} target="_blank" rel="noreferrer" className="text-white/80 hover:underline">
+                  CSDN
+                </a>
+              </li>
+            </ul>
           </div>
-        </div>
+        </motion.aside>
       </div>
+
+      {/* Resume section */}
+      <div className="mt-6 bg-background-alt/50 border border-white/5 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-lg font-medium">
+          <Download className="w-5 h-5" />
+          <span>{t('Request Resume (PDF)', '申请下载简历 (PDF)')}</span>
+        </div>
+        <a
+          href={`mailto:${siteConfig.profile.email}?subject=${encodeURIComponent('Resume Request')}&body=${encodeURIComponent('I would like to request a download of the resume. Please grant access.')}`}
+          className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Send className="w-4 h-4" /> {t('Email to request resume','通过邮件请求简历')}
+        </a>
+      </div>
+
+      <p className="mt-2 text-sm text-white/70">
+        {t('Resume download requires email approval', '简历下载需邮件申请，经审批后提供')}
+      </p>
     </PageLayout>
   )
 }
