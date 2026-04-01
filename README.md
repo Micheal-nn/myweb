@@ -27,6 +27,8 @@ A modern, bilingual (EN/ZH) personal portfolio website featuring WebGL animated 
 | Skills | `/skills` | Technical skills overview |
 | Blog | `/blog` | Blog placeholder |
 
+![alt text](image.png)
+
 ## Tech Stack
 
 - **Framework:** Next.js 16.2.1 (App Router, Turbopack)
