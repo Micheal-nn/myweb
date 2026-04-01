@@ -4,7 +4,7 @@ export const siteConfig = {
   // Site metadata
   title: "Michael | Michael",
   description: "AI Technical Product Manager at Huawei. Tokyo Tech & Beihang graduate. Specializing in LLM optimization, algorithm productization, and AI product development.",
-  url: "https://machenan.vercel.app",
+  url: "https://my-website-zeta-seven.vercel.app",
   
   // Intro screen
   intro: {

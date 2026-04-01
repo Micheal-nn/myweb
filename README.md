@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Michael's Personal Website
+
+A modern, bilingual (EN/ZH) personal portfolio website featuring WebGL animated backgrounds, built with Next.js 16, React 19, and Tailwind CSS v4.
+
+**Live Site:** [my-website-zeta-seven.vercel.app](https://my-website-zeta-seven.vercel.app)
+
+## Features
+
+- **WebGL Animated Backgrounds** — Liquid metal shader on intro page, deep ocean light refraction shader on all sub-pages
+- **Bilingual Support** — Full English/Chinese toggle with localStorage persistence (English default)
+- **Interactive Intro** — Enter animation with liquid metal fluid background
+- **Clickable Avatar** — Click to toggle between two profile photos on the main page
+- **Timeline Layout** — Work experience and projects displayed in vertical timeline with expandable cards
+- **Privacy Controls** — No real name displayed, no phone number, resume download requires email approval
+- **Responsive Design** — Mobile-friendly layout with Tailwind CSS
+
+## Pages
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Intro | `/` | Animated liquid metal intro with enter button |
+| Main | `/main` | Profile hub with avatar, navigation cards, deep ocean background |
+| About | `/about` | Education, expertise, leadership, philosophy |
+| Experience | `/experience` | 5 work experiences in expandable timeline |
+| Projects | `/projects` | 5 project cards with detailed metrics and outcomes |
+| Contact | `/contact` | Contact form, social links, resume request via email |
+| Skills | `/skills` | Technical skills overview |
+| Blog | `/blog` | Blog placeholder |
+
+## Tech Stack
+
+- **Framework:** Next.js 16.2.1 (App Router, Turbopack)
+- **UI:** React 19, Tailwind CSS v4, Framer Motion 12
+- **Graphics:** WebGL (GLSL shaders), Canvas2D
+- **Language:** TypeScript 5
+- **Deployment:** Vercel
+
+## Project Structure
+
+```
+app/
+├── page.tsx              # Intro page (FluidBackground WebGL)
+├── main/page.tsx         # Main hub (WaveBackground WebGL)
+├── about/page.tsx        # About page
+├── experience/page.tsx   # Work experience
+├── projects/page.tsx     # Project portfolio
+├── contact/page.tsx      # Contact & resume request
+├── layout.tsx            # Root layout (LanguageProvider)
+components/
+├── FluidBackground.tsx   # WebGL liquid metal shader (intro)
+├── WaveBackground.tsx    # WebGL deep ocean shader (sub-pages)
+├── PageLayout.tsx        # Shared layout with WaveBackground
+├── ProjectCard.tsx       # Expandable project card
+├── Timeline.tsx          # Expandable timeline card
+├── LanguageToggle.tsx    # EN/ZH floating toggle
+├── NavigationCard.tsx    # Main page nav card
+context/
+├── LanguageContext.tsx    # React Context + localStorage
+lib/
+├── config.ts             # All site data (bilingual)
+```
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Deploy to Vercel
+vercel --prod
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Deployed on [Vercel](https://vercel.com). To update:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+vercel --prod
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Site settings: [Vercel Dashboard](https://vercel.com/cnma640302-1991s-projects/my-website/settings)

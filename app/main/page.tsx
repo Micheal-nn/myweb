@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Mail, MapPin } from 'lucide-react'
 import NavigationCard from '@/components/NavigationCard'
-import SubtleBackground from '@/components/SubtleBackground'
+import WaveBackground from '@/components/WaveBackground'
 import { siteConfig } from '@/lib/config'
+
+const avatars = ['/photos/avatar1.png', '/photos/avatar2.png']
 
 // GitHub SVG icon
 const GithubIcon = () => (
@@ -15,23 +18,30 @@ const GithubIcon = () => (
 )
 
 export default function MainPage() {
+  const [avatarIdx, setAvatarIdx] = useState(0)
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center py-20 px-4 bg-[#0a0a0a] text-white relative">
-      <SubtleBackground />
-      {/* Avatar */}
+      <WaveBackground />
+      {/* Avatar — click to toggle */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative w-32 h-32 rounded-full overflow-hidden mb-6 border-4 border-[#3b82f6]/30"
+        className="relative w-32 h-32 rounded-full overflow-hidden mb-6 border-4 border-[#3b82f6]/30 cursor-pointer group"
+        onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
+        title="Click to change photo"
       >
         <Image
-          src={siteConfig.profile.avatar}
+          src={avatars[avatarIdx]}
           alt={siteConfig.intro.nameEn}
           fill
-          className="object-cover"
+          className="object-cover transition-opacity duration-300"
           priority
         />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-colors duration-200">
+          <span className="text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200">Click</span>
+        </div>
       </motion.div>
 
       {/* Name */}
